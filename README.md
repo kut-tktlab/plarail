@@ -6,7 +6,7 @@
 参考になりそうなサイト  
 <http://yoppa.org/tau_bmaw13/4772.html>
 
-*PROCESSINGの設定*
+#### PROCESSINGの設定
 
 processingには2つの設定ファイルが必要。  
 processingのライブラリというフォルダに入れる。  
@@ -17,7 +17,7 @@ processingのライブラリというフォルダに入れる。
 
 ---------
 
-*ARDUINOの設定*
+#### ARDUINOの設定
 
 arduinoをmacで動かすために必要（このページのmacの奴をダウンロード)  
 <https://www.arduino.cc/en/Main/Software>
