@@ -10,10 +10,12 @@
 
 processingには2つの設定ファイルが必要。  
 processingのライブラリというフォルダに入れる。  
-1.processingからhttpリクエストをマビーに飛ばすためのもの  
+1. processingからhttpリクエストをマビーに飛ばすためのもの  
 <https://github.com/runemadsen/HTTP-Requests-for-Processing>  
-2.processingとArduinoを連携させるためのもの  
+2. processingとArduinoを連携させるためのもの  
 <http://playground.arduino.cc/interfacing/processing>
+
+---------
 
 *ARDUINOの設定*
 
