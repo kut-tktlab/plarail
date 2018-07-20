@@ -19,7 +19,7 @@ processingのライブラリというフォルダに入れる。
 
 #### ARDUINOの設定
 
-arduinoをmacで動かすために必要（このページのmacの奴をダウンロード)  
+Arduinoをmacで動かすために必要(このページのmacの奴をダウンロード)  
 <https://www.arduino.cc/en/Main/Software>
 
 Arduino設定  
