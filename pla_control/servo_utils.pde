@@ -27,7 +27,8 @@ class Servo{
         this.count++;
       }
     }
-    
+   
+    //angle: 0-180, time: framerate = 120
     void servoRot(int angle, int time) {
       this.rot = true;
       this.time = time;
