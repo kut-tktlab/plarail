@@ -7,7 +7,9 @@ import http.requests.*;
 Arduino arduino;
 MabeeControl control = new MabeeControl();
 Sensor[] sensors = new Sensor[3];
+Servo servo;
 
+int servo1 = 6;
 void setup() {
 
   size(1600,800);
@@ -16,6 +18,13 @@ void setup() {
   for(int i = 0; i < 3; i++) {
   sensors[i] = new Sensor(arduino, i);
   }
+  
+  servo = new Servo(arduino, servo1);
+  
+  for(int i = 0; i < 2; i++){
+    pla_[i] = 2;
+  }
+  
   initPla();
 }
 
@@ -27,6 +36,8 @@ void draw() {
   for (Sensor s: sensors) {
     s.update();
   }
+  
+  servo.update();
 }
 
 void initPla() {
