@@ -15,11 +15,6 @@ void delegateInit() {
   setPow(1, 75);
 }
 
-/*
-  servo_pin:   connect servo pin number
-  angle:       0-180
-  time:        millisecond
-*/
 
 
 // place: 0 ~ 2
@@ -28,11 +23,9 @@ int pla_[] = new int[2];
 int stop_pla = -1;
 void event(int plaNum, int place){
   arduino.servoWrite(7,40);
-  //println("gousya = " + plaNum + ", place = " + place);
-  println("gousya = 0, place = " + place);
-  println("gousya = 1, place = " + pla_[1]);
+  println("gousya = " + plaNum + ", place = " + place);
   
-  if(place == 2) {
+  if(place == 2 && plaNum == 1) {
     // rot:0-180, frameRate: 120
     servo.servoRot(90, 80);
   }
@@ -45,6 +38,7 @@ void event(int plaNum, int place){
   
   pla_[plaNum] = place;
   other_pla = plaNum^1;
+  
   if(pla_[other_pla] == place || (pla_[other_pla] | place) == 1) {
     println(plaNum+ " stop");
     setPow(plaNum, 0);
