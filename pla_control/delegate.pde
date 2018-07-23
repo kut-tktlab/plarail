@@ -15,11 +15,32 @@ void delegateInit() {
   setPow(1, 75);
 }
 
+int pla_count[] = new int [2];
+void pla_count(){
+  for(int i = 0; i < pla_.length; i++) {
+    pla_count[i]++;
+  }
+}
 
+void pla_replace() {
+  for(int i = 0; i < pla_.length; i++) {
+    if(pla_[i] == 2 && pla_count[i] >= 240) {
+      pla_[i] = i;// atode
+    }
+  }
+}
+
+void pla_restart() {
+  if(stop_pla != -1) {
+      if(pla_[stop_pla] == 2 && (pla_[stop_pla^1] == 0 || pla_[stop_pla^1] == 1)){
+        setPow(stop_pla, 100);
+        stop_pla = -1;
+      }
+  }
+}
 
 // place: 0 ~ 2
 int other_pla;
-int pla_[] = new int[2];
 int stop_pla = -1;
 void event(int plaNum, int place){
   arduino.servoWrite(7,40);
@@ -36,11 +57,11 @@ void event(int plaNum, int place){
     stop_pla = -1;
   }
   
+  pla_count[plaNum] = 0;
   pla_[plaNum] = place;
   other_pla = plaNum^1;
   
   if(pla_[other_pla] == place || (pla_[other_pla] | place) == 1) {
-    println(plaNum+ " stop");
     setPow(plaNum, 0);
     stop_pla = plaNum;
   }
