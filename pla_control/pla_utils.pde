@@ -104,7 +104,6 @@ class MabeeControl {
   void init() {
     boolean result = false;
     do {
-      //print(".");
       delay(100);
       result = validRequestString("", "state", "PoweredOn");
     } while(!result);
