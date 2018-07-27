@@ -13,6 +13,8 @@ void setPow(int plaNum, int val) {
 void delegateInit() {
   setPow(0, 100);
   setPow(1, 75);
+  Message("start pla0");
+  Message("start pla1");
 }
 
 int pla_count[] = new int [2];
@@ -24,8 +26,9 @@ void pla_count(){
 
 void pla_replace() {
   for(int i = 0; i < pla_.length; i++) {
-    if(pla_[i] == 2 && pla_count[i] >= 240) {
-      pla_[i] = i;// atode
+    if(pla_[i] == 2 && pla_count[i] >= 350) {
+      Message("senser 0or1 error: plarail "+ pla_[i] +"change area "+ i);
+      event(i,i);// atode
     }
   }
 }
@@ -33,8 +36,17 @@ void pla_replace() {
 void pla_restart() {
   if(stop_pla != -1) {
       if(pla_[stop_pla] == 2 && (pla_[stop_pla^1] == 0 || pla_[stop_pla^1] == 1)){
+        Message("senser 0or1 error: plarail"+ pla_[stop_pla] +" strat");
         setPow(stop_pla, 100);
         stop_pla = -1;
+        return;
+      }
+      
+      if((pla_[stop_pla] == 0 || pla_[stop_pla] == 1) && pla_count[stop_pla] > 600) {
+        Message("delay start: plarail"+ pla_[stop_pla] +" start");
+        setPow(stop_pla, 100);
+        stop_pla = -1;
+        return;
       }
   }
 }
@@ -46,14 +58,19 @@ void event(int plaNum, int place){
   arduino.servoWrite(7,40);
   println("gousya = " + plaNum + ", place = " + place);
   
-  if(place == 2 && plaNum == 1) {
+  if(place == 2 && (plaNum == 1 || random(10) < 3)) {
     // rot:0-180, frameRate: 120
-    servo.servoRot(90, 80);
+    servo.servoRot(90, 200);
   }
   
   if(stop_pla != -1) {
-    if (stop_pla == 0) setPow(stop_pla, 80);
-    else setPow(stop_pla, 100);
+    if (stop_pla == 0) {
+      Message("power control: start  pla0");
+      setPow(stop_pla, 100);
+    }else{
+      Message("power control: start  pla1");
+      setPow(stop_pla, 100);
+    }
     stop_pla = -1;
   }
   
@@ -62,7 +79,14 @@ void event(int plaNum, int place){
   other_pla = plaNum^1;
   
   if(pla_[other_pla] == place || (pla_[other_pla] | place) == 1) {
-    setPow(plaNum, 0);
+    if (plaNum == 0) {
+      //Message("power control: speedDown pla0");
+      Message("power control: stop pla0");
+      setPow(plaNum, 0);
+    }else {
+      Message("power control: stop pla1");
+      setPow(plaNum, 0);
+    }
     stop_pla = plaNum;
   }
 }
