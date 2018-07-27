@@ -1,3 +1,5 @@
+// font Menlo
+
 import processing.net.*;
 import processing.serial.*;
 import cc.arduino.*;
@@ -9,6 +11,7 @@ MabeeControl control = new MabeeControl();
 Sensor[] sensors = new Sensor[3];
 int pla_[] = new int[2];
 Servo servo;
+String msg[] = new String[5];
 
 int servo1 = 9;
 void setup() {
@@ -26,6 +29,10 @@ void setup() {
     pla_[i] = 0;
   }
   
+  for(int i = 0; i < msg.length; i++) {
+    msg[i] = "";
+  }
+  
   initPla();
 }
 
@@ -33,13 +40,19 @@ void setup() {
 
 void draw() {
   background(#000000);
-  //sensors[0].update();
+  textSize(13);
+  
   for (Sensor s: sensors) {
     s.update();
   }
   text("pla1: "+pla_[0] + "   count: " + pla_count[0], 100, 100);
   text("pla2: "+pla_[1] + "   count: " + pla_count[1], 100, 200);
   text("stop pla: "+stop_pla, 100, 300);
+  
+  textSize(20);
+  for(int i = 0; i < msg.length; i++) {
+    text(msg[i], 400, 200 - 30*i);
+  }
   pla_count();
   pla_replace();
   pla_restart();
@@ -72,4 +85,11 @@ void initPla() {
   //control.setDuty(2,0);
   //control.disconnect();
 
+}
+
+void Message(String str) {
+  for(int i = msg.length-1; i > 0; i--) {
+   msg[i] = msg[i-1];
+  }
+  msg[0] = str;
 }
