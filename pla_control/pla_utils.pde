@@ -17,7 +17,13 @@ class Sensor {
   int whiteCount = 0;
   int blackCount = 0;
   int[] whiteWidths = new int[1000];
+  int[] blackWidths = new int[1000];
   int widthIndex = 0;
+  int blackIndex = 0;
+  
+  boolean blackRead = false;
+  boolean checkCode = false;
+  int plaCode = 0;
   
   Sensor(Arduino arduino, int port) {
     this.arduino = arduino;
@@ -42,26 +48,70 @@ class Sensor {
   void update() {
     int v = arduino.analogRead(port);
     int rV = round(map(v, 800, 1024, height * 0.1, height * 0.9));
-    boolean whiteCond = rV < 550;
+    
+    boolean whiteCond = rV < 500;
+
     graph.update(whiteCond ? 300:100);
     if (whiteCond) {
       whiteCount++;
-    } else {
-      if (blackCount > frameRate * 10) {
-        widthIndex = 0;
+      if(widthIndex == 0) blackCount = 0;
+      if(blackRead){
+        blackWidths[blackIndex] = blackCount;
+        println("port:"+port+" black memory " + blackIndex+":"+blackWidths[blackIndex]);
+        checkCode = true;
+        blackRead = false;
         blackCount = 0;
+        blackIndex++;
+      }
+      
+    } else {
+      if (blackCount > frameRate * 1.2) {
+        if(widthIndex == 2) {
+          whiteCount = 2;
+          println("port:"+port+" emergency white memory ");
+        }else{
+          widthIndex = 0;
+          blackIndex = 0;
+          blackCount = 0;
+        }
         //print("-");
       }
       
       if (whiteCount > 1) {
         whiteWidths[widthIndex] = whiteCount;
+        println("port:"+port+" white memory " + widthIndex+":"+whiteWidths[widthIndex]);
         widthIndex++;
         whiteCount = 0;
+        blackRead = true;
       }
       
       blackCount++;
     }
     
+    int bitSet;
+    if(checkCode) {
+      bitSet = int(pow(2, widthIndex-1));
+      if(whiteWidths[widthIndex-1] > blackWidths[blackIndex-1]) {
+        println("bitSet:"+bitSet);
+        plaCode = plaCode | bitSet;
+      }
+      checkCode = false;
+    }
+    
+    //白幅の終端幅の場所を設定  例:[黒白黒白]なら2
+    if(widthIndex == 3) {
+      widthIndex = 0;
+      blackIndex = 0;
+      checkCode = false;
+      blackRead = false;
+      println("plarail:"+plaCode+" passing the gate:"+place);
+      println("read finish");
+      println();
+      event(plaCode, place);
+      plaCode = 0;
+    }
+    
+    /*
     if (widthIndex > 1 && abs(whiteWidths[0] - whiteWidths[1]) > 1) {
       
       //println(">>" + whiteWidths[0] + ", " + whiteWidths[1]);
@@ -73,7 +123,7 @@ class Sensor {
       event(plaNum, place);
       
       widthIndex = 0;
-    }
+    }*/
     
   }
   
