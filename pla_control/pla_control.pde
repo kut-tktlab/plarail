@@ -9,9 +9,9 @@ import http.requests.*;
 Arduino arduino;
 MabeeControl control = new MabeeControl();
 Sensor[] sensors = new Sensor[3];
-int pla_[] = new int[2];
+int pla_[] = new int[3];
 Servo servo;
-String msg[] = new String[5];
+String msg[] = new String[9];
 
 int servo1 = 9;
 void setup() {
@@ -45,16 +45,22 @@ void draw() {
   for (Sensor s: sensors) {
     s.update();
   }
-  text("pla1: "+pla_[0] + "   count: " + pla_count[0], 100, 100);
-  text("pla2: "+pla_[1] + "   count: " + pla_count[1], 100, 200);
-  text("stop pla: "+stop_pla, 100, 300);
+  
+  //text("pla1: "+pla_[0] + "   count: " + pla_count[0], 100, 100);
+  //text("pla2: "+pla_[1] + "   count: " + pla_count[1], 100, 200);
+  //text("stop pla: "+stop_pla, 100, 300);
   
   textSize(20);
   for(int i = 0; i < msg.length; i++) {
-    text(msg[i], 400, 200 - 30*i);
+    String[] m1 = match(msg[i], "error");
+    
+    if (m1 != null) fill(#FF0000); //match
+    else fill(#FFFFFF);
+    text(msg[i], 50, 320 - 30*i);
+    
+    fill(#FFFFFF);
   }
   pla_count();
-  pla_replace();
   pla_restart();
   servo.update();
 }
@@ -68,10 +74,12 @@ void initPla() {
   control.waitDevice();
   println("check device");
   control.connect(1);
-  control.connect(2);
+  //control.connect(2);
+  control.connect(3);
   println("connected");
   control.makeReady(1);
-  control.makeReady(2);
+  //control.makeReady(2);
+  control.makeReady(3);
   println("ready");
   delegateInit();
   //control.setDuty(1, powerTable[0][high]);
