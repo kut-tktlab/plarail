@@ -17,18 +17,24 @@ int servo1 = 9;
 void setup() {
 
   size(1600,800);
-  frameRate(120);  
+  frameRate(120);
+  // arduino = new Arduino(this, "シリアルポート", 通信速度);
   arduino = new Arduino(this, "/dev/tty.usbmodem143221", 57600);
+  
+  //センサーの数だけ生成
   for(int i = 0; i < 3; i++) {
-  sensors[i] = new Sensor(arduino, i);
+    sensors[i] = new Sensor(arduino, i);
   }
   
+  //サーボモータの数だけ生成(arduino, 接続ポート番号)
   servo = new Servo(arduino, servo1);
   
-  for(int i = 0; i < 2; i++){
+  //プラレールの数だけ生成
+  for(int i = 0; i < 3; i++){
     pla_[i] = 0;
   }
   
+  //メッセージに空文字を挿入
   for(int i = 0; i < msg.length; i++) {
     msg[i] = "";
   }
@@ -46,18 +52,15 @@ void draw() {
     s.update();
   }
   
-  //text("pla1: "+pla_[0] + "   count: " + pla_count[0], 100, 100);
-  //text("pla2: "+pla_[1] + "   count: " + pla_count[1], 100, 200);
-  //text("stop pla: "+stop_pla, 100, 300);
-  
+  //グラフ画面に文字を表示
   textSize(20);
   for(int i = 0; i < msg.length; i++) {
-    String[] m1 = match(msg[i], "error");
-    
+    //文字列に"error"が含まれる時、文字を赤に
+    String[] m1 = match(msg[i], "error");    
     if (m1 != null) fill(#FF0000); //match
     else fill(#FFFFFF);
-    text(msg[i], 50, 320 - 30*i);
     
+    text(msg[i], 50, 320 - 30*i);
     fill(#FFFFFF);
   }
   pla_count();
@@ -65,6 +68,7 @@ void draw() {
   servo.update();
 }
 
+//Mabeeeの接続設定 (詳しくはpla_utils内のMabeeControlクラスを参照)
 void initPla() {
   control.init();
   println("finish init");
@@ -82,19 +86,9 @@ void initPla() {
   control.makeReady(3);
   println("ready");
   delegateInit();
-  //control.setDuty(1, powerTable[0][high]);
-  //control.setDuty(2, powerTable[1][low]);
-  //control.setDuty(1,100);
-  //control.setDuty(2,50);
-  //delay(5000);
-  //control.setDuty(1,0);
-  //control.setDuty(2,0);
-  //delay(5000);
-  //control.setDuty(2,0);
-  //control.disconnect();
-
 }
 
+//グラフ画面に文字を表示させる関数
 void Message(String str) {
   for(int i = msg.length-1; i > 0; i--) {
    msg[i] = msg[i-1];
