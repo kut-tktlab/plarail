@@ -1,6 +1,6 @@
 import processing.serial.*;
 
-// plaNum: 0 ~ 1 gousya
+// plaNum: 0 ~ 2 gousya
 // val: Mabeee's power 0 ~ 100
 void setPow(int plaNum, int val) {
   if (plaNum == 0) {
@@ -12,24 +12,28 @@ void setPow(int plaNum, int val) {
   }
 }
 
+//各プラレールの初期速度
 void delegateInit() {
   setPow(0, 100);
-  setPow(1, 100);
+  //setPow(1, 100);
   setPow(2, 100);
-  Message("start plarail 0");
-  Message("start plarail 1");
 }
 
 int pla_count[] = new int [3];
+//各プラレールの時間計測用関数
 void pla_count(){
+  /*
+  時間差発進　新幹線追加のためボツ
   for(int i = 0; i < pla_.length; i++) {
     pla_count[i]++;
   }
+  */
 }
 
-
+//カウンタを使った時間差発進や位置調整用関数
 void pla_restart() {
   /*
+  時間差発進　新幹線追加のためボツ
   if(stop_pla != -1) {
       if(pla_[stop_pla] == 2 && (pla_[stop_pla^1] == 0 || pla_[stop_pla^1] == 1)){
         Message("senser 0or1 error: plarail "+ stop_pla +" strat");
@@ -37,9 +41,7 @@ void pla_restart() {
         stop_pla = -1;
         return;
       }
-      */
-      /*
-      //時間差発進　新幹線追加のためボツ
+
       if((pla_[stop_pla] == 0 || pla_[stop_pla] == 1) && pla_count[stop_pla] > 600) {
         Message("delay start: plarail "+ pla_[stop_pla] +" start");
         setPow(stop_pla, 100);
@@ -51,31 +53,26 @@ void pla_restart() {
   */
 }
 
-// place: 0 ~ 2
-int other_pla;
-int stop_pla[] = {0, 0};
-int empty_place = 0;
+/* place: 0 ~ 2
+   各センサーがプラレールを検出した時の処理
+*/
 void event(int plaNum, int place){
   println("gousya = " + plaNum + ", place = " + place);
   
   if(plaNum == 2 && place == 2) {
-    servo.servoRot(90, 140);
+    //サーボモータを回転させる(回転角度, 0度に戻る時間 1秒 = 120フレーム)
+    servo.servoRot(90, 155);
   }
   
   if(plaNum == 1 && place == 2) {
-    setPow(0, 100);
-    setPow(2, 100);
     servo.servoRot(90, 240);
+    setPow(0, 95);
+    setPow(2, 100);
   }
-  
-  //pla_count[plaNum] = 0;
-  //pla_[plaNum] = place;
   
   if((place == 0 || place == 1) && plaNum != 1) {
+    //通信遅延の対策として2回停止信号を送る
     setPow(plaNum, 0);
-    stop_pla[0] = stop_pla[1];
-    stop_pla[1] = plaNum;
+    setPow(plaNum, 0);
   }
-  
-  
 }
