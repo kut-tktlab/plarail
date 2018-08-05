@@ -28,7 +28,11 @@ class Servo{
       }
     }
    
-    //angle: 0-180, time: framerate = 120
+    /*
+      angle: 0-180, time: framerate = 120
+      このメソッドが呼ばれた時, update()のcountがスタート
+      countとtimeが同値の時, servoRotReset()が実行 s
+    */
     void servoRot(int angle, int time) {
       this.rot = true;
       this.time = time;
@@ -36,6 +40,7 @@ class Servo{
       arduino.servoWrite(this.port, angle);
     }
     
+    //サーボモータの角度を0度にするメソッド
     void servoRotReset() {
       this.rot = false;
       arduino.servoWrite(this.port, 0);
