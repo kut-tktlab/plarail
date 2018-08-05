@@ -1,9 +1,6 @@
 import http.requests.*;
 import cc.arduino.*;
-int[] lastPass = {1, 1};
 
-int placeCount = 0;
-int[][] powerTable = {{0, 90}, {0, 75}};
 
 final int low = 0;
 final int high = 1;
@@ -18,7 +15,7 @@ class Sensor {
   int blackCount = 0;
   int[] whiteWidths = new int[1000];
   int[] blackWidths = new int[1000];
-  int widthIndex = 0;
+  int whiteIndex = 0;
   int blackIndex = 0;
   
   boolean blackRead = false;
@@ -52,9 +49,18 @@ class Sensor {
     boolean whiteCond = rV < 500;
 
     graph.update(whiteCond ? 300:100);
+    //白帯を検出した時, whiteCountを増やす
     if (whiteCond) {
       whiteCount++;
-      if(widthIndex == 0) blackCount = 0;
+      
+      //whiteIndex(白帯の検出数)が0の時, blackCountを0にする
+      if(whiteIndex == 0) blackCount = 0;
+      
+      /*
+        blackReadが真の時, blackWidths(黒帯の検出幅配列)の要素[blackIndex(黒帯検出数)]にblackCountを代入
+        blackIndexを1増やしcheckCodeを真にしblackReadを負にする
+        blackCountも0にする
+      */
       if(blackRead){
         blackWidths[blackIndex] = blackCount;
         println("port:"+port+" black memory " + blackIndex+":"+blackWidths[blackIndex]);
@@ -65,42 +71,65 @@ class Sensor {
       }
       
     } else {
-      if (blackCount > frameRate * 1.2) {
-        if(widthIndex == 2) {
+      //黒帯を検出した時, blackCountを増やす
+      
+      //もし黒帯が一定時間続いた時
+      if (blackCount > frameRate * 0.35) {
+        /*
+          (白帯が3つの時)
+          whiteIndex(白帯の検出数)が2だったなら終端の白帯の検出抜けのため
+          whiteCountを2にする
+        */
+        if(whiteIndex == 2) {
           whiteCount = 2;
           println("port:"+port+" emergency white memory ");
         }else{
-          widthIndex = 0;
+          //それ以外ならばノイズもしくは何も無い空間として検出前に戻す
+          whiteIndex = 0;
           blackIndex = 0;
           blackCount = 0;
+          checkCode = false;
         }
-        //print("-");
       }
       
+      /*
+        whiteCountが1以上(白帯が検出されている)の時, whiteWidths(白帯の検出幅配列)の要素[whiteIndex(白帯検出数)]にwhiteCountを代入
+        whiteIndexを1増やしblackReadを真にする
+        whiteCountを0にする
+      */
       if (whiteCount > 1) {
-        whiteWidths[widthIndex] = whiteCount;
-        println("port:"+port+" white memory " + widthIndex+":"+whiteWidths[widthIndex]);
-        widthIndex++;
+        whiteWidths[whiteIndex] = whiteCount;
+        println("port:"+port+" white memory " + whiteIndex+":"+whiteWidths[whiteIndex]);
+        whiteIndex++;
         whiteCount = 0;
         blackRead = true;
       }
-      
       blackCount++;
     }
     
     int bitSet;
+    /*
+      checkCodeが真の時
+      whiteWidthsとblackWidthsの幅を比べる
+      白幅が大きい時, 検出数に対応したbit数に1をセットする
+      その後, checkCodeを負にする
+    */
     if(checkCode) {
-      bitSet = int(pow(2, widthIndex-1));
-      if(whiteWidths[widthIndex-1] > blackWidths[blackIndex-1]) {
+      bitSet = int(pow(2, whiteIndex-1));
+      if(whiteWidths[whiteIndex-1] > blackWidths[blackIndex-1]) {
         println("bitSet:"+bitSet);
         plaCode = plaCode | bitSet;
       }
       checkCode = false;
     }
     
-    //白幅の終端幅の場所を設定  例:[黒白黒白]なら2
-    if(widthIndex == 3) {
-      widthIndex = 0;
+    /*
+      白幅の終端幅の場所を設定  例:[黒白黒白]なら2
+      whiteIndex(白帯検出数)が終端白帯の位置の時, event()を呼び出す
+      その後, 各フラグや変数を検出前に戻す
+    */
+    if(whiteIndex == 3) {
+      whiteIndex = 0;
       blackIndex = 0;
       checkCode = false;
       blackRead = false;
@@ -110,23 +139,7 @@ class Sensor {
       event(plaCode, place);
       plaCode = 0;
     }
-    
-    /*
-    if (widthIndex > 1 && abs(whiteWidths[0] - whiteWidths[1]) > 1) {
-      
-      //println(">>" + whiteWidths[0] + ", " + whiteWidths[1]);
-      //print("place: " + place);
-      //println(whiteWidths[0] > whiteWidths[1] ? "==== 1 ====" : "==== 2 ====");
-      
-      int plaNum = whiteWidths[0] > whiteWidths[1] ? 0 : 1;
-      
-      event(plaNum, place);
-      
-      widthIndex = 0;
-    }*/
-    
   }
-  
 }
 
 enum State {
