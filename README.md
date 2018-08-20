@@ -17,7 +17,7 @@ processingのライブラリというフォルダに入れる。
 
 ### ARDUINOの設定
 
-Arduinoをmacで動かすために必要(このページのmacの奴をダウンロード)  
+Arduinoをmacで動かすために必要(このページのmacの奴をダウンロード)  
 <https://www.arduino.cc/en/Main/Software>
 
 Arduino設定  
@@ -25,7 +25,8 @@ Arduino設定
 ウィンドウが出る→繋ぐ→マイコンに書き込む  
 ※もしかしたら最初にエラーが出るかも→ボードかシリアルポートが違う設定になってるかも（Arduinoに書いてあるみたい　例：Megaなんとか）
 
-## MaBeee SDK 
+## MaBeee SDK
 
+MaBeeeをMacからコントロールできるようにするアプリ  
 MaBeee macOS SDK  
 <https://github.com/novars-jp/MaBeeeMacApp>
