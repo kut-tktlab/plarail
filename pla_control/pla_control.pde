@@ -10,7 +10,6 @@ int WhiteWidthPlace = 3;
 Sensor[] sensors;
 Arduino arduino;
 MabeeControl control = new MabeeControl();
-Servo servo;
 String msg[] = new String[9];
 
 ArrayList<Plarail_Timer> Pla_Timer = new ArrayList<Plarail_Timer>();
