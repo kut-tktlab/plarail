@@ -19,8 +19,6 @@ void setup() {
   size(1600,800);
   frameRate(120);
   background(#000000);
-  // arduino = new Arduino(this, "シリアルポート", 通信速度);
-  //arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
   
   SetSerialPoat();
   StartSetup(arduino);
