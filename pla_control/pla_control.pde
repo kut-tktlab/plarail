@@ -6,6 +6,7 @@ import cc.arduino.*;
 import org.firmata.*;
 import http.requests.*;
 int Senser_Number = 3;
+int WhiteWidthPlace = 3;
 Sensor[] sensors;
 Arduino arduino;
 MabeeControl control = new MabeeControl();

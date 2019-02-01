@@ -128,7 +128,7 @@ class Sensor {
       whiteIndex(白帯検出数)が終端白帯の位置の時, event()を呼び出す
       その後, 各フラグや変数を検出前に戻す
     */
-    if(whiteIndex == 3) {
+    if(whiteIndex == WhiteWidthPlace) {
       whiteIndex = 0;
       blackIndex = 0;
       checkCode = false;

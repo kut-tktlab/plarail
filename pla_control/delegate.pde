@@ -11,3 +11,7 @@ void setPow(int plaNum, int val) {
     control.setDuty(3, val); 
   }
 }
+
+void addPlarailTimer(int plaNum, int startSpd, int endSpd, int time) {
+  Pla_Timer.add(new Plarail_Timer(plaNum, startSpd, endSpd, time));
+}
