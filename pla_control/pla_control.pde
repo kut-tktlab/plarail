@@ -7,6 +7,7 @@ import org.firmata.*;
 import http.requests.*;
 int Senser_Number = 3;
 int WhiteWidthPlace = 3;
+int MaBeeeNumber = 3;
 Sensor[] sensors;
 Arduino arduino;
 MabeeControl control = new MabeeControl();
@@ -77,13 +78,13 @@ void initPla() {
   println("finish scan");
   control.waitDevice();
   println("check device");
-  control.connect(1);
-  control.connect(2);
-  control.connect(3);
+  for(int i = 1; i <= MaBeeeNumber; i++) {
+    control.connect(i);
+  }
   println("connected");
-  control.makeReady(1);
-  control.makeReady(2);
-  control.makeReady(3);
+  for(int i = 1; i <= MaBeeeNumber; i++) {
+    control.makeReady(i);
+  }
   println("ready");
   
   delegateInit();
@@ -97,12 +98,10 @@ void initPla() {
   stop_plaを起動させて止める
 */
 void dispose() {
-  control.setDuty(1, 0);
-  control.setDuty(2, 0);
-  control.setDuty(3, 0);
-  control.disconnect(1);
-  control.disconnect(2);
-  control.disconnect(3);
+  for(int i = 1; i <= MaBeeeNumber; i++) {
+    control.setDuty(i, 0);
+    control.disconnect(i);
+  }
 }
 
 //グラフ画面に文字を表示させる関数
