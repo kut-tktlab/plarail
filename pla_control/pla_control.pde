@@ -20,8 +20,9 @@ void setup() {
   frameRate(120);
   background(#000000);
   // arduino = new Arduino(this, "シリアルポート", 通信速度);
-  arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
+  //arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
   
+  SetSerialPoat();
   StartSetup(arduino);
   
   sensors = new Sensor[Senser_Number];
@@ -92,10 +93,10 @@ void initPla() {
 }
 
 /*
-  停止やバツボタンを押した時の処理
+  バツボタンを押した時の処理（停止ボタンではだめ）
   stop_plaと同じ処理であり、普通に動いている時は
-  このスケッチの停止やバツボタンを押せばプラレールは止まる
-  例外(nullpointerexceptionとか)の場合は
+  このスケッチの描画画面のバツボタンを押せばプラレールは止まる
+  例外(nullpointerexceptionとか)や停止ボタンを押した場合は
   stop_plaを起動させて止める
 */
 void dispose() {
