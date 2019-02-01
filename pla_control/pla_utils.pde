@@ -1,7 +1,6 @@
 import http.requests.*;
 import cc.arduino.*;
 
-
 final int low = 0;
 final int high = 1;
 
