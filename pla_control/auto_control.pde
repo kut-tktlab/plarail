@@ -3,7 +3,7 @@ import processing.serial.*;
 void StartSetup(Arduino arduino) {
   //センサーの数を設定
   Senser_Number = 3;
-  //白幅の終端幅の場所を設定  例:[黒白黒白]なら2
+  //白幅の終端幅の場所を設定  例:[白黒白黒白]なら3
   WhiteWidthPlace = 3;
   
   //サーボモータの数だけ生成(arduino, 接続ポート番号)
@@ -12,8 +12,8 @@ void StartSetup(Arduino arduino) {
 
 //各プラレールの初期速度
 void delegateInit() {
-  setPow(0, 90);
-  setPow(1, 100);
+  setPow(0, 100);
+  setPow(1, 90);
   setPow(2, 100);
 }
 
@@ -41,7 +41,7 @@ void senser_event(int plaNum, int place){
   }else if(place == 2) {
     if(plaNum == 0) {
       servo.servoRot(90, 155);
-      addPlarailTimer(0, 50, 100, 30);
+      addPlarailTimer(0, 60, 100, 50);
       addPlarailTimer(1, 50, 90, 60);
     }
     
@@ -52,7 +52,7 @@ void senser_event(int plaNum, int place){
     if(plaNum == 2) {
       servo.servoRot(90, 240);
       setPow(0, 100);
-      addPlarailTimer(1, 70, 90, 120);
+      addPlarailTimer(1, 60, 90, 120);
     }
   }
   
