@@ -1,5 +1,10 @@
 import processing.serial.*;
 
+void SetSerialPoat(){
+  // arduino = new Arduino(this, "シリアルポート", 通信速度);
+  arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
+}
+
 void StartSetup(Arduino arduino) {
   //センサーの数を設定
   Senser_Number = 3;
@@ -18,6 +23,9 @@ void delegateInit() {
 }
 
 /*
+    プラレールの速度を変える
+    setPow(プラレール番号, 速度 0-100);
+    
     プラレールに時間差で速度変更をさせる
     Pla_Timer.add(プラレール番号, 設定時間内の速度, 設定時間後の速度, 設定時間　1秒=120);
     
