@@ -96,14 +96,15 @@ class MabeeControl {
     return false;
   }
   
-  
 }
 
 void setup() {
   MabeeControl control = new MabeeControl();
   control.setDuty(1, 0);
   control.setDuty(2, 0);
+  control.setDuty(3, 0);
   control.disconnect(1);
   control.disconnect(2);
+  control.disconnect(3);
   exit();
 }
