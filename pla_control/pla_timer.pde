@@ -21,4 +21,5 @@ class Plarail_Timer {
     }
     this.count++;
   }
+  
 }
