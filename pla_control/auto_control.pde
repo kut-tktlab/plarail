@@ -11,6 +11,8 @@ Servo servo;
 void StartSetup(Arduino arduino) {
   //センサーの数を設定
   Senser_Number = 3;
+  //MaBeeeの数を設定
+  MaBeeeNumber = 3;
   //白幅の終端幅の場所を設定  例:[白黒白黒白]なら3
   WhiteWidthPlace = 3;
   
