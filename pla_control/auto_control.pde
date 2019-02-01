@@ -5,13 +5,16 @@ void SetSerialPoat(){
   arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
 }
 
+//サーボモータの数だけ生成
+Servo servo;
+
 void StartSetup(Arduino arduino) {
   //センサーの数を設定
   Senser_Number = 3;
   //白幅の終端幅の場所を設定  例:[白黒白黒白]なら3
   WhiteWidthPlace = 3;
   
-  //サーボモータの数だけ生成(arduino, 接続ポート番号)
+  //サーボモータの設定(arduino, 接続ポート番号)
   servo = new Servo(arduino, 9);
 }
 
