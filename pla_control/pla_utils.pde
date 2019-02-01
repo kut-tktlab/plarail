@@ -136,7 +136,7 @@ class Sensor {
       println("plarail:"+plaCode+" passing the gate:"+place);
       println("read finish");
       println();
-      event(plaCode, place);
+      senser_event(plaCode, place);
       plaCode = 0;
     }
   }
@@ -217,7 +217,7 @@ class MabeeControl {
   void setDuty(int id, int val) {
     GetRequest get = new GetRequest("http://localhost:11111/devices/" + id + "/set?pwm_duty=" + val);
     get.send();
-    delay(100);
+    //delay(50);
   }
   
   void disconnect(int id) {

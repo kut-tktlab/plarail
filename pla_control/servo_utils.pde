@@ -31,7 +31,7 @@ class Servo{
     /*
       angle: 0-180, time: framerate = 120
       このメソッドが呼ばれた時, update()のcountがスタート
-      countとtimeが同値の時, servoRotReset()が実行 s
+      countとtimeが同値の時, servoRotReset()が実行
     */
     void servoRot(int angle, int time) {
       this.rot = true;

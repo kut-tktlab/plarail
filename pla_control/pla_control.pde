@@ -5,33 +5,29 @@ import processing.serial.*;
 import cc.arduino.*;
 import org.firmata.*;
 import http.requests.*;
-
+int Senser_Number = 3;
+Sensor[] sensors;
 Arduino arduino;
 MabeeControl control = new MabeeControl();
-Sensor[] sensors = new Sensor[3];
-int pla_[] = new int[3];
 Servo servo;
 String msg[] = new String[9];
 
-int servo1 = 9;
+ArrayList<Plarail_Timer> Pla_Timer = new ArrayList<Plarail_Timer>();
 void setup() {
 
   size(1600,800);
   frameRate(120);
+  background(#000000);
   // arduino = new Arduino(this, "シリアルポート", 通信速度);
-  arduino = new Arduino(this, "/dev/tty.usbmodem143221", 57600);
+  arduino = new Arduino(this, "/dev/tty.usbmodem141221", 57600);
+  
+  StartSetup(arduino);
+  
+  sensors = new Sensor[Senser_Number];
   
   //センサーの数だけ生成
-  for(int i = 0; i < 3; i++) {
+  for(int i = 0; i < Senser_Number; i++) {
     sensors[i] = new Sensor(arduino, i);
-  }
-  
-  //サーボモータの数だけ生成(arduino, 接続ポート番号)
-  servo = new Servo(arduino, servo1);
-  
-  //プラレールの数だけ生成
-  for(int i = 0; i < 3; i++){
-    pla_[i] = 0;
   }
   
   //メッセージに空文字を挿入
@@ -42,14 +38,20 @@ void setup() {
   initPla();
 }
 
-
-
 void draw() {
   background(#000000);
   textSize(13);
   
+  fill(#FFFFFF);
+  
   for (Sensor s: sensors) {
     s.update();
+  }
+  
+  for(int i = Pla_Timer.size()-1; i >= 0; i--) {
+    Plarail_Timer pla_Timer = Pla_Timer.get(i);
+    pla_Timer.TimerCont();
+    if(pla_Timer.endTime == -1) Pla_Timer.remove(i);
   }
   
   //グラフ画面に文字を表示
@@ -63,13 +65,12 @@ void draw() {
     text(msg[i], 50, 320 - 30*i);
     fill(#FFFFFF);
   }
-  pla_count();
-  pla_restart();
   servo.update();
 }
 
 //Mabeeeの接続設定 (詳しくはpla_utils内のMabeeControlクラスを参照)
 void initPla() {
+  
   control.init();
   println("finish init");
   
@@ -78,13 +79,14 @@ void initPla() {
   control.waitDevice();
   println("check device");
   control.connect(1);
-  //control.connect(2);
+  control.connect(2);
   control.connect(3);
   println("connected");
   control.makeReady(1);
-  //control.makeReady(2);
+  control.makeReady(2);
   control.makeReady(3);
   println("ready");
+  
   delegateInit();
 }
 
