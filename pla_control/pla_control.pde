@@ -20,7 +20,7 @@ void setup() {
   frameRate(120);
   background(#000000);
   // arduino = new Arduino(this, "シリアルポート", 通信速度);
-  arduino = new Arduino(this, "/dev/tty.usbmodem141221", 57600);
+  arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
   
   StartSetup(arduino);
   
@@ -89,6 +89,22 @@ void initPla() {
   println("ready");
   
   delegateInit();
+}
+
+/*
+  停止やバツボタンを押した時の処理
+  stop_plaと同じ処理であり、普通に動いている時は
+  このスケッチの停止やバツボタンを押せばプラレールは止まる
+  例外(nullpointerexceptionとか)の場合は
+  stop_plaを起動させて止める
+*/
+void dispose() {
+  control.setDuty(1, 0);
+  control.setDuty(2, 0);
+  control.setDuty(3, 0);
+  control.disconnect(1);
+  control.disconnect(2);
+  control.disconnect(3);
 }
 
 //グラフ画面に文字を表示させる関数
