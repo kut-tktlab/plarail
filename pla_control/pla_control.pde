@@ -87,7 +87,7 @@ void initPla() {
   }
   println("ready");
   
-  delegateInit();
+  InitPower();
 }
 
 /*
