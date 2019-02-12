@@ -21,7 +21,7 @@ void StartSetup(Arduino arduino) {
 }
 
 //各プラレールの初期速度
-void delegateInit() {
+void InitPower() {
   setPow(0, 100);
   setPow(1, 90);
   setPow(2, 100);
@@ -35,7 +35,7 @@ void delegateInit() {
     Pla_Timer.add(プラレール番号, 設定時間内の速度, 設定時間後の速度, 設定時間　1秒=120);
     
     サーボモータを回転させる
-    回転させるサーボモータクラス.servoRot(回転角度, 0度に戻る時間 1秒 = 120フレーム)
+    回転させるサーボモータクラス.servoRot(回転角度 0-180, 0度に戻る時間 1秒 = 120フレーム)
 */
 
 /* 
