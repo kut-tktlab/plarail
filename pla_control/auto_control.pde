@@ -27,10 +27,15 @@ Servo servo;
 void StartSetup(Arduino arduino) {
   //センサーの数を設定
   Senser_Number = 3;
-  //MaBeeeの数を設定
-  MaBeeeNumber = 3;
   //白幅の終端幅の場所を設定  例:[白黒白黒白]なら3
   WhiteWidthPlace = 3;
+
+  //MaBeeeの数を設定
+  MaBeeeNumber = 3;
+  //プラレール番号の順にMaBeee名と列車名を列挙
+  MaBeeeNames = new String[]{"MaBeee015260", "MaBeee015261", "MaBeeeA08638"};
+  PlaNames = new String[]{"サバンナ号", "金太郎", "SL"};
+  control = new MabeeControl(MaBeeeNames);
 
   //サーボモータの設定(arduino, 接続ポート番号)
   servo = new Servo(arduino, 9);

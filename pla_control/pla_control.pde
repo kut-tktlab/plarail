@@ -5,12 +5,15 @@ import processing.serial.*;
 import cc.arduino.*;
 import org.firmata.*;
 import http.requests.*;
+
 int Senser_Number = 3;
 int WhiteWidthPlace = 3;
 int MaBeeeNumber = 3;
+String[] MaBeeeNames;
+String[] PlaNames;
+MabeeControl control;
 Sensor[] sensors;
 Arduino arduino;
-MabeeControl control = new MabeeControl();
 String msg[] = new String[9];
 
 ArrayList<Plarail_Timer> Pla_Timer = new ArrayList<Plarail_Timer>();
@@ -20,7 +23,7 @@ void setup() {
   frameRate(120);
   background(#000000);
 
-  SetSerialPoat();
+  SetSerialPort();
   StartSetup(arduino);
 
   sensors = new Sensor[Senser_Number];
@@ -76,15 +79,11 @@ void initPla() {
 
   control.scan();
   println("finish scan");
-  control.waitDevice();
+  control.waitAndSetDeviceAll();
   println("check device");
-  for(int i = 1; i <= MaBeeeNumber; i++) {
-    control.connect(i);
-  }
+  control.connectAll();
   println("connected");
-  for(int i = 1; i <= MaBeeeNumber; i++) {
-    control.makeReady(i);
-  }
+  control.makeReadyAll();
   println("ready");
 
   InitPower();
@@ -98,7 +97,7 @@ void initPla() {
   stop_plaを起動させて止める
 */
 void dispose() {
-  for(int i = 1; i <= MaBeeeNumber; i++) {
+  for(int i = 0; i < MaBeeeNumber; i++) {
     control.setDuty(i, 0);
     control.disconnect(i);
   }
