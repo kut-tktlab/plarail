@@ -1,8 +1,24 @@
 import processing.serial.*;
 
-void SetSerialPoat(){
+// シリアルポートへのパスを自動検出
+String findSerialPortPath() {
+  StringList strout = new StringList();
+  StringList strerr = new StringList();
+  int res = shell(strout, strerr, "ls /dev/tty.usbmodem*");
+  if (res != 0) {
+    throw new RuntimeException("Serial port not found.");
+  }
+  String path = strout.get(0);
+  return path;
+}
+
+void SetSerialPort() {
+  // シリアルポートのパス
+  String path = findSerialPortPath();
+
   // arduino = new Arduino(this, "シリアルポート", 通信速度);
-  arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
+  // arduino = new Arduino(this, "/dev/tty.usbmodem143241", 57600);
+  arduino = new Arduino(this, path, 57600);
 }
 
 //サーボモータの数だけ生成
