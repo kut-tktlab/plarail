@@ -2,7 +2,7 @@ class Plarail_Timer {
   int plaNum;
   int f_speed;
   int e_speed;
-  
+
   int count;
   int endTime;
   Plarail_Timer(int Num, int firstSpeed, int endSpeed, int Timer) {
@@ -13,7 +13,7 @@ class Plarail_Timer {
     this.endTime = Timer;
     this.count = 0;
   }
-  
+
   void TimerCont() {
     if(this.count == this.endTime) {
       setPow(this.plaNum, this.e_speed);
@@ -21,5 +21,5 @@ class Plarail_Timer {
     }
     this.count++;
   }
-  
+
 }

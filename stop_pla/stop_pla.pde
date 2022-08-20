@@ -2,7 +2,7 @@ import http.requests.*;
 
 
 class MabeeControl {
- 
+
   boolean existDevice() {
     try {
       JSONObject data = getJSON("devices");
@@ -10,8 +10,8 @@ class MabeeControl {
     } catch (Exception e) {}
     return false;
   }
-  
-  
+
+
   void init() {
     boolean result = false;
     do {
@@ -20,24 +20,24 @@ class MabeeControl {
       result = validRequestString("", "state", "PoweredOn");
     } while(!result);
   }
-  
+
   void scan() {
     boolean result = false;
     do {
-      print("."); 
+      print(".");
       GetRequest get = new GetRequest("http://localhost:11111/" + "scan/start");
       get.send();
       delay(100);
       result = validRequestBoolean("scan/", "scan", true);
     } while(!result);
   }
-  
+
   void waitDevice() {
     while(!existDevice()){
       print(".");
     }
   }
-  
+
   void connect(int id) {
     boolean result = false;
     do {
@@ -48,7 +48,7 @@ class MabeeControl {
       result = validRequestString("devices/" + id +"/", "state", "Connected");
     } while(!result);
   }
-  
+
   void makeReady(int id) {
     GetRequest get = new GetRequest("http://localhost:11111/devices/" + id +"/connect");
     get.send();
@@ -57,28 +57,28 @@ class MabeeControl {
     get.send();
     delay(100);
   }
-  
+
   void setDuty(int id, int val) {
     GetRequest get = new GetRequest("http://localhost:11111/devices/" + id + "/set?pwm_duty=" + val);
     get.send();
     delay(100);
   }
-  
+
   void disconnect(int id) {
     GetRequest get = new GetRequest("http://localhost:11111/devices/" + id + "/disconnect");
     get.send();
     delay(100);
   }
-  
+
   JSONObject getJSON(String url) throws Exception {
     GetRequest get = new GetRequest("http://localhost:11111/" + url);
     get.send();
     return parseJSONObject(get.getContent());
   }
-  
+
   boolean validRequestString(String url, String key, String value) {
     try {
-      
+
       println(getJSON(url).getString(key));
       return getJSON(url).getString(key).equals(value);
     } catch (Exception e) {
@@ -86,7 +86,7 @@ class MabeeControl {
     }
     return false;
   }
-  
+
   boolean validRequestBoolean(String url, String key, Boolean value) {
     try {
       return getJSON(url).getBoolean(key) == value;
@@ -95,7 +95,7 @@ class MabeeControl {
     }
     return false;
   }
-  
+
 }
 
 void setup() {
