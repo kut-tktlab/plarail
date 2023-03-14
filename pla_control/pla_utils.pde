@@ -22,6 +22,9 @@ class Sensor {
   boolean checkCode = false;
   int plaCode = 0;
 
+  int updateCoolDownTime = 120;
+  int sensorTimer = 0;
+
   Sensor(Arduino arduino, int port) {
     this.arduino = arduino;
     this.port = port;
@@ -39,16 +42,24 @@ class Sensor {
       break;
     }
 
-    graph = new MyGraph(2, tmpC);
+    graph = new MyGraph(2, tmpC, port);
   }
 
   void update() {
     int v = arduino.analogRead(port);
     int rV = round(map(v, 800, 1024, height * 0.1, height * 0.9));
 
-    boolean whiteCond = rV < 500;
-
+    boolean whiteCond = rV < 450;
     graph.update(whiteCond ? 300:100);
+
+    sensorTimer++;
+
+    // Cool Down
+    if (updateCoolDownTime != 0) {
+      updateCoolDownTime--;
+      return;
+    }
+
     //白帯を検出した時, whiteCountを増やす
     if (whiteCond) {
       whiteCount++;
@@ -88,7 +99,9 @@ class Sensor {
           whiteIndex = 0;
           blackIndex = 0;
           blackCount = 0;
+          blackRead = false;
           checkCode = false;
+          plaCode = 0;
         }
       }
 
@@ -134,9 +147,16 @@ class Sensor {
       checkCode = false;
       blackRead = false;
       println("plarail:"+plaCode+" passing the gate:"+place);
-      println("read finish");
-      println();
-      senser_event(plaCode, place);
+
+      int plaNum = -1;
+      if (plaCode == 0) plaNum = 1;
+      if (plaCode == 1) plaNum = 0;
+      if (plaCode == 2) plaNum = 2;
+      println(sensorTimer);
+      //println("read finish");
+      updateCoolDownTime = 60;
+      //println();
+      senser_event(plaNum, place);
       plaCode = 0;
     }
   }
@@ -326,10 +346,14 @@ class MyGraph {
   int[] vals;
   int step;
   color graphColor;
-  MyGraph(int step, color graphColor) {
+  int h;
+  MyGraph(int step, color graphColor, int h) {
     this.vals = new int[width / step];
+    //this.vals = new int[width / 5]; // DEBUG:
+    //this.step = 5;
     this.step = step;
     this.graphColor = graphColor;
+    this.h = h;
   }
 
   void update(int val) {
@@ -345,13 +369,31 @@ class MyGraph {
 
   private void drawArray(int[] array) {
     pushMatrix();
-    translate(0, height);
+    //translate(0, height - h * (height/3) + (height/9));
+    translate(0, 120 + h * 120);//DEBUG:
     scale(1, -1);
     stroke(graphColor);
+
     for(int i = 0; i < array.length - 1; i++) {
       line(i * step, array[i], (i + 1) * step, array[i + 1]);
     }
 
+    int preVal = 0; int preIndex = 0;
+    //for(int i = 0; i < array.length - 1; i++) {
+    //  //println(array[i]);
+    //  int oneORzero = (array[i] != 0) ? 100 : 0;
+    //  if (oneORzero != preVal) {
+    //    line(preIndex * step, preVal, (i-1) * step, preVal);
+    //    line((i-1) * step, preVal, i * step, oneORzero);
+    //    preVal = oneORzero;
+    //    preIndex = i;
+    //  }
+    //}
+    //line(preIndex * step, preVal, (array.length-1) * step, preVal);
+
+    scale(1, -1);
+    textSize(30);
+    text("ゲートxxx", 30, 0);
     popMatrix();
   }
 }
