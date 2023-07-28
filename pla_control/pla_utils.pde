@@ -49,8 +49,10 @@ class Sensor {
     int v = arduino.analogRead(port);
     int rV = round(map(v, 800, 1024, height * 0.1, height * 0.9));
 
-    boolean whiteCond = rV < 450;
+    boolean whiteCond = rV < 500;
     graph.update(whiteCond ? 300:100);
+
+    //if (port == 2) println(rV);
 
     sensorTimer++;
 
@@ -349,8 +351,6 @@ class MyGraph {
   int h;
   MyGraph(int step, color graphColor, int h) {
     this.vals = new int[width / step];
-    //this.vals = new int[width / 5]; // DEBUG:
-    //this.step = 5;
     this.step = step;
     this.graphColor = graphColor;
     this.h = h;
@@ -369,31 +369,13 @@ class MyGraph {
 
   private void drawArray(int[] array) {
     pushMatrix();
-    //translate(0, height - h * (height/3) + (height/9));
-    translate(0, 120 + h * 120);//DEBUG:
+    translate(0, height - h * (height/3) + (height/9));
     scale(1, -1);
     stroke(graphColor);
-
     for(int i = 0; i < array.length - 1; i++) {
       line(i * step, array[i], (i + 1) * step, array[i + 1]);
     }
 
-    int preVal = 0; int preIndex = 0;
-    //for(int i = 0; i < array.length - 1; i++) {
-    //  //println(array[i]);
-    //  int oneORzero = (array[i] != 0) ? 100 : 0;
-    //  if (oneORzero != preVal) {
-    //    line(preIndex * step, preVal, (i-1) * step, preVal);
-    //    line((i-1) * step, preVal, i * step, oneORzero);
-    //    preVal = oneORzero;
-    //    preIndex = i;
-    //  }
-    //}
-    //line(preIndex * step, preVal, (array.length-1) * step, preVal);
-
-    scale(1, -1);
-    textSize(30);
-    text("ゲートxxx", 30, 0);
     popMatrix();
   }
 }

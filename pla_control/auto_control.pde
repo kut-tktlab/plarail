@@ -42,15 +42,12 @@ void StartSetup(Arduino arduino) {
 }
 
 int[] fastSpeeds = {100, 100, 90};
-int[] midlSpeeds = { 90, 90, 90};
-int[] slowSpeeds = { 70, 70, 80};
+int[] midlSpeeds = { 90,  90, 90};
+int[] slowSpeeds = { 70,  70, 80};
 int[] currentSpeeds = {0, 0, 0};
 int[] passedGates = {-1, -1, -1};
 
-boolean initPhase  = true;
-boolean endPhase   = false;
-boolean endPhaseDo = false;
-boolean runningPhase = false;
+boolean initPhase = true;
 
 //各プラレールの初期速度
 void InitInitPower() {
@@ -65,19 +62,6 @@ void InitPower() {
   //setPow(0, 100);
   //setPow(1, 100);
   //setPow(2, 70);
-}
-
-void resetTimer(int plaNum) {
-  for (int i = Pla_Timer.size()-1; i >= 0; i--) {
-    if (Pla_Timer.get(i).plaNum == plaNum) {
-      Pla_Timer.remove(i);
-    }
-  }
-}
-
-void stopNow(int plaNum) {
-  resetTimer(plaNum);
-  for (int i = 0; i < 5; i++) setPow(plaNum, 0);
 }
 
 /*
@@ -106,72 +90,27 @@ void senser_event(int plaNum, int place) {
     " has passed the gate " + place + " from gate" + prevPlace + ".");
   if (openLog) println(PlaNames[plaNum] + " が " + place + " 番ゲートを通過しました。");
 
-  if (endPhase) {
-    if (endPhaseDo) {
-      if (place == 2) {
-        if (plaNum == 1) {
-          servo.servoRot(90, 120*10);
-          slowChange(0, currentSpeeds[0], midlSpeeds[1], 120*2, 20);
-          slowChange(1, currentSpeeds[1], midlSpeeds[1], 120*2, 20);
-        }
-        if (plaNum == 2) {
-          servo.servoRot(90, 120*10);
-          slowChange(0, currentSpeeds[0], midlSpeeds[0], 120*2, 20);
-          slowChange(1, currentSpeeds[1], midlSpeeds[1], 120*2, 20);
-          slowChange(2, currentSpeeds[2], midlSpeeds[2], 120*2, 20);
-        }
-      }
-      if (place == 0) {
-        if (plaNum == 0) {
-          stopNow(0);
-        }
-        if (plaNum == 1) {
-          stopNow(0);
-          stopNow(1);
-        }
-        if (plaNum == 2) {
-          stopNow(0);
-          stopNow(1);
-          stopNow(2);
-        }
-      } else {
-        if (place == 2 && plaNum == 2) {
-          println("停車処理を開始します。");
-          endPhaseDo = true;
-        }
-      }
-      endPhase = false;
-      endPhaseDo = false;
-      runningPhase = false;
-      println("停車処理が完了しました。");
-      return;
-    }
-  }
-
   if (initPhase) {
     if (place == 0) {
-      stopNow(0);
+      setPow(0, 0);
     }
     if (place == 1) {
-      if (plaNum == 1) stopNow(1);
+      if (plaNum == 1) setPow(1, 0);
     }
     if (place == 2) {
       if (plaNum == 0) {
-        resetTimer(1);
         slowChange(1, 0, midlSpeeds[1], 300, 20);
         servo.servoRot(90, 120*10);
       }
       if (plaNum == 1) {
         servo.servoRotReset();
-        resetTimer(2);
         slowChange(2, 0, midlSpeeds[2], 300, 20);
       }
       if (plaNum == 2) {
-        stopNow(2);
+        setPow(2, 0);
         servo.servoRot(90, 120*10);
         InitPower();
         initPhase = false;
-        runningPhase = true;
       }
     }
     return;
@@ -179,45 +118,69 @@ void senser_event(int plaNum, int place) {
 
   if (place == 2) {
     for (int i = 0; i < passedGates.length; i++) {
-      if (i != plaNum && passedGates[i] == 2) emergencyBrake();
+      if (i != plaNum && passedGates[i] == 2) dispose();
     }
     if (plaNum == 0) {
       servo.servoRot(90, 360);
-      resetTimer(0);
+      for (int i = 0; i <= Pla_Timer.size()-1; i++) {
+        if (Pla_Timer.get(i).plaNum == plaNum) {
+          Pla_Timer.remove(i);
+          i--;
+        }
+      }
       slowChange(0, currentSpeeds[0], slowSpeeds[0], 120*2, 10);
-      resetTimer(2);
+
       slowChange(2, currentSpeeds[2], fastSpeeds[2], 120*1, 10);
     }
     if (plaNum == 1) {
       servo.servoRotReset();
-      resetTimer(1);
       slowChange(1, currentSpeeds[1], slowSpeeds[1], 120*2, 10);
     }
     if (plaNum == 2) {
       servo.servoRot(90, 600);
-      resetTimer(2);
+      //slowChange(0, currentSpeeds[0], fastSpeeds[0], 120*1, 10);
+      //slowChange(1, currentSpeeds[1], fastSpeeds[1], 120*7, 30);
+
       slowChange(2, currentSpeeds[2], slowSpeeds[2], 120*2, 10);
+
+      //addPlarailTimer(0, 70, 100, 60);
+      //addPlarailTimer(1, 40, 60,  90);
+      //addPlarailTimer(1, 40, 80,  180);
+      //addPlarailTimer(1, 40, 100, 240);
     }
   }
 
   if (place == 0) {
-    if (plaNum != 0 && plaNum == 1) emergencyBrake();
+    if (plaNum != 0 && plaNum == 1) dispose();
     if (plaNum == 2) {
-      stopNow(2);
-      resetTimer(1);
+      for (int i = Pla_Timer.size()-1; i >= 0; i--) {
+        if (Pla_Timer.get(i).plaNum == plaNum) {
+          Pla_Timer.remove(i);
+        }
+      }
+      for (int i = 0; i < 5; i++) setPow(plaNum, 0);
+      //setPow(plaNum, 0);
+      //slowChange(2, currentSpeeds[2], fastSpeeds[2], 300, 10);
       slowChange(1, currentSpeeds[1], fastSpeeds[1], 120*1, 10);
     }
   }
 
   if (place == 1) {
-    if (plaNum != 1) emergencyBrake();
+    if (plaNum != 1) dispose();
     if (plaNum == 1) {
-      resetTimer(0);
       slowChange(0, currentSpeeds[0], fastSpeeds[0], 120*1, 10);
     }
   }
 
   if ((place == 0 || place == 1) && plaNum != 2) {
-    stopNow(plaNum);
+    //通信遅延の対策として5回停止信号を送る
+    //println("test" + PlaNames[plaNum]);
+    for (int i = Pla_Timer.size()-1; i >= 0; i--) {
+      if (Pla_Timer.get(i).plaNum == plaNum) {
+        Pla_Timer.remove(i);
+      }
+    }
+    for (int i = 0; i < 5; i++) setPow(plaNum, 0);
+    //setPow(plaNum, 0);
   }
 }
