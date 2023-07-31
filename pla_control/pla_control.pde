@@ -15,11 +15,13 @@ MabeeControl control;
 Sensor[] sensors;
 Arduino arduino;
 String msg[] = new String[9];
+Boolean debugLog = false;
+Boolean openLog = true;
 
 ArrayList<Plarail_Timer> Pla_Timer = new ArrayList<Plarail_Timer>();
 void setup() {
-
-  size(1600,800);
+  size(600,700);
+  //fullScreen();
   frameRate(120);
   background(#000000);
 
@@ -45,12 +47,15 @@ void draw() {
   background(#000000);
   textSize(13);
 
+  //println(frameRate);
+
   fill(#FFFFFF);
 
   for (Sensor s: sensors) {
-    s.update();
+    try {s.update();}catch(Exception e) {dispose();print(e);stop();}
   }
 
+  //if (Pla_Timer.size() != 0) println(Pla_Timer.get(0).endTime);
   for(int i = Pla_Timer.size()-1; i >= 0; i--) {
     Plarail_Timer pla_Timer = Pla_Timer.get(i);
     pla_Timer.TimerCont();
@@ -86,7 +91,8 @@ void initPla() {
   control.makeReadyAll();
   println("ready");
 
-  InitPower();
+  //InitPower();
+  InitInitPower();
 }
 
 /*
